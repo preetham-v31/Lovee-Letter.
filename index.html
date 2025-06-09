@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Romantic Proposal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
+
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    overflow: hidden;
+    background: #111;
+    font-family: 'Parisienne', cursive;
+    color: #fff;
+    user-select: none;
+  }
+
+  /* Background floating hearts */
+  #background-animation {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .heart {
+    position: absolute;
+    width: 20px; height: 18px;
+    background: #ff5c8d;
+    transform: rotate(-45deg);
+    opacity: 0.6;
+    animation: floatUp linear infinite;
+    filter: drop-shadow(0 0 5px #ff5c8d);
+  }
+  .heart::before,
+  .heart::after {
+    content: "";
+    position: absolute;
+    width: 20px; height: 18px;
+    background: #ff5c8d;
+    border-radius: 50%;
+  }
+  .heart::before {
+    top: -10px; left: 0;
+  }
+  .heart::after {
+    top: 0; left: 10px;
+  }
+  @keyframes floatUp {
+    0% {
+      transform: translateY(100vh) rotate(-45deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(-20vh) rotate(-45deg);
+      opacity: 0;
+    }
+  }
+
+  /* Container for everything */
+  #container {
+    position: relative;
+    z-index: 10;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  /* Letter box */
+  #letter {
+    position: relative;
+    background: rgba(255 255 255 / 0.1);
+    border: 2px solid #ff5c8d;
+    border-radius: 15px;
+    padding: 30px 40px;
+    max-width: 600px;
+    box-shadow: 0 0 20px #ff5c8daa;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Sparkles */
+  .sparkle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 70%, transparent 100%);
+    animation: sparklePulse 2s infinite ease-in-out alternate;
+    pointer-events: none;
+  }
+  @keyframes sparklePulse {
+    0% {opacity: 0.3; transform: scale(0.7);}
+    100% {opacity: 1; transform: scale(1.2);}
+  }
+
+  /* Buttons */
+  .btn-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+  button {
+    background: #ff5c8d;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 28px;
+    margin: 0 12px;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 8px #ff5c8daa;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #ff2a64;
+  }
+
+  /* Confetti container */
+  #confetti-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10000;
+    overflow: visible;
+  }
+
+  /* Download button */
+  #downloadBtn {
+    background: #4a90e2;
+  }
+
+</style>
+</head>
+<body>
+
+<div id="background-animation"></div>
+
+<div id="container">
+  <div id="letter">
+    <h1>My Love Letter</h1>
+    <p>Dear [Crush's Name],</p>
+    <p>
+      I've waited a lifetime to say this, and today I gather the courage to tell you how deeply I adore you.
+      You light up my world in ways words cannot describe.
+    </p>
+    <p>Will you be mine forever?</p>
+
+    <div class="btn-container">
+      <button id="yesBtn">Yes ❤️</button>
+      <button id="yesYesBtn">Yes Yes! 💖</button>
+      <button id="downloadBtn">Download Letter</button>
+    </div>
+  </div>
+</div>
+
+<div id="confetti-container"></div>
+
+<script>
+  // Generate floating hearts in background
+  const bg = document.getElementById('background-animation');
+  const heartsCount = 30;
+
+  for(let i=0; i<heartsCount; i++) {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.animationDuration = (10 + Math.random() * 15) + 's';
+    heart.style.animationDelay = (Math.random() * 15) + 's';
+    heart.style.width = heart.style.height = (10 + Math.random() * 20) + 'px';
+    bg.appendChild(heart);
+  }
+
+  // Sparkles around letter
+  const letter = document.getElementById('letter');
+  const sparklesCount = 10;
+  for(let i=0; i<sparklesCount; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.width = sparkle.style.height = (5 + Math.random() * 8) + 'px';
+    sparkle.style.top = (Math.random() * 100) + '%';
+    sparkle.style.left = (Math.random() * 100) + '%';
+    sparkle.style.animationDelay = (Math.random() * 2) + 's';
+    letter.appendChild(sparkle);
+  }
+
+  // Audio setup - preload and handle user interaction
+  const yesMusic = new Audio('https://cdn.pixabay.com/download/audio/2021/10/22/audio_118c691cf7.mp3?filename=romantic-14572.mp3');
+  const yesYesMusic = new Audio('https://cdn.pixabay.com/download/audio/2021/10/19/audio_cdbb5bf22d.mp3?filename=love-melody-14648.mp3');
+
+  yesMusic.loop = true;
+  yesYesMusic.loop = true;
+
+  // Reduce autoplay issues by only loading audio on first user interaction
+  let audioStarted = false;
+  function tryStartAudio() {
+    if (audioStarted) return;
+    yesMusic.volume = 0.2;
+    yesMusic.play().catch(() => {}); // Play softly as background music
+    audioStarted = true;
+    window.removeEventListener('click', tryStartAudio);
+    window.removeEventListener('keydown', tryStartAudio);
+  }
+  window.addEventListener('click', tryStartAudio);
+  window.addEventListener('keydown', tryStartAudio);
+
+  // Confetti container
+  const confettiContainer = document.getElementById('confetti-container');
+
+  function confettiBurst() {
+    for(let i=0; i<100; i++) {
+      const confetti = document.createElement('div');
+      confetti.style.position = 'fixed';
+      confetti.style.width = confetti.style.height = (6 + Math.random()*6) + 'px';
+      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 70%)`;
+      confetti.style.top = window.innerHeight/2 + 'px';
+      confetti.style.left = window.innerWidth/2 + 'px';
+      confetti.style.borderRadius = '3px';
+      confetti.style.opacity = 1;
+      confetti.style.pointerEvents = 'none';
+      confetti.style.zIndex = 10000;
+      confetti.style.transform = `rotate(${Math.random()*360}deg)`;
+
+      confettiContainer.appendChild(confetti);
+
+      const angle = Math.random() * 2 * Math.PI;
+      const radius = 150 + Math.random() * 100;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+
+      confetti.animate([
+        {transform: `translate(0,0) rotate(${Math.random()*360}deg)`, opacity: 1},
+        {transform: `translate(${x}px, ${y}px) rotate(${Math.random()*720}deg)`, opacity: 0}
+      ], {
+        duration: 2000 + Math.random() * 1000,
+        easing: 'ease-out',
+        fill: 'forwards'
+      });
+
+      setTimeout(() => confetti.remove(), 3000);
+    }
+  }
+
+  // Play music on button clicks with proper handling
+  const yesBtn = document.getElementById('yesBtn');
+  const yesYesBtn = document.getElementById('yesYesBtn');
+
+  function playMusic(type) {
+    yesMusic.pause();
+    yesYesMusic.pause();
+
+    if(type === 'yes') {
+      yesMusic.currentTime = 0;
+      yesMusic.volume = 0.7;
+      yesMusic.play().catch(() => {});
+    } else if(type === 'yesYes') {
+      yesYesMusic.currentTime = 0;
+      yesYesMusic.volume = 0.7;
+      yesYesMusic.play().catch(() => {});
+    }
+  }
+
+  yesBtn.addEventListener('click', () => {
+    playMusic('yes');
+    confettiBurst();
+  });
+
+  yesYesBtn.addEventListener('click', () => {
+    playMusic('yesYes');
+    confettiBurst();
+  });
+
+  // Download PDF using html2canvas + jsPDF
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  downloadBtn.addEventListener('click', () => {
+    if (!window.html2canvas || !window.jspdf) {
+      loadScripts([
+        'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+      ], generatePDF);
+    } else {
+      generatePDF();
+    }
+  });
+
+  function loadScripts(urls, callback) {
+    let loaded = 0;
+    urls.forEach(url => {
+      const script = document.createElement('script');
+      script.src = url;
+      script.onload = () => {
+        loaded++;
+        if (loaded === urls.length) callback();
+      };
+      document.body.appendChild(script);
+    });
+  }
+
+  async function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const letterDiv = document.getElementById('letter');
+    const canvas = await html2canvas(letterDiv, { scale: 2, backgroundColor: null });
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'px',
+      format: [canvas.width, canvas.height]
+    });
+    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+    pdf.save('Love_Letter.pdf');
+  }
+</script>
+
+</body>
+</html>
